@@ -129,8 +129,7 @@ int main() {
         cout << "\nBest K = " << best_K
             << " (≈ " << fixed << setprecision(2)
             << (double)best_K / threads << "× CPU threads)\n\n";
-
-
     }
     return 0;
 }
+
