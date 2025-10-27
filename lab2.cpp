@@ -53,7 +53,7 @@ int main() {
     if (threads == 0) threads = 4;
 
     cout << "Hardware threads: " << threads << "\n\n";
-    vector<size_t> sizes = { 100000, 1000000, 10000000 };
+    vector<size_t> sizes = { 100000, 10000000, 100000000 };
 
     for (size_t n : sizes) {
         cout << "---- N = " << n << " ----\n";
@@ -122,5 +122,6 @@ int main() {
     }
     return 0;
 }
+
 
 
