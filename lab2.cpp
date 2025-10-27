@@ -6,12 +6,10 @@
 #include <random>
 #include <chrono>
 #include <iomanip>
-#include <windows.h>
 
 using namespace std;
 using namespace chrono;
 
-// --- Генерація випадкових даних ---
 vector<int> generate_data(size_t n) {
     random_device rd;
     mt19937 gen(rd());
@@ -21,7 +19,6 @@ vector<int> generate_data(size_t n) {
     return v;
 }
 
-// --- Власна паралельна версія replace_if ---
 void parallel_replace_if(vector<int>& data, int K, auto pred, int new_val) {
     size_t n = data.size();
     if (K <= 1 || n < K) {
@@ -42,7 +39,6 @@ void parallel_replace_if(vector<int>& data, int K, auto pred, int new_val) {
     for (auto& t : threads) t.join();
 }
 
-// --- Вимірювання часу ---
 template <typename Func>
 long long measure_ms(Func f) {
     auto t1 = high_resolution_clock::now();
@@ -51,14 +47,8 @@ long long measure_ms(Func f) {
     return duration_cast<milliseconds>(t2 - t1).count();
 }
 
-// --- Основна програма ---
-int main() {
-    SetConsoleOutputCP(65001);  
-    SetConsoleCP(65001);
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
 
-    cout << fixed << setprecision(3);
+int main() {
     unsigned threads = thread::hardware_concurrency();
     if (threads == 0) threads = 4;
 
@@ -69,10 +59,10 @@ int main() {
         cout << "---- N = " << n << " ----\n";
         auto base = generate_data(n);
 
-        auto pred = [](int x) { return x % 7 == 0; };
-        int new_val = -1;
+        auto pred = [](int x) { return x % 12 == 0; };
+        int new_val = 4;
 
-        // 1) Без політики
+       
         {
             auto data = base;
             auto t = measure_ms([&]() {
@@ -81,7 +71,7 @@ int main() {
             cout << "No policy: " << t << " ms\n";
         }
 
-        // 2) З політиками
+      
         {
             auto data = base;
             auto t = measure_ms([&]() {
@@ -106,9 +96,9 @@ int main() {
             cout << "par_unseq: " << t << " ms\n";
         }
 
-        // 3) Власний паралельний алгоритм
+     
         cout << "\nCustom parallel replace_if (K threads):\n";
-        cout << setw(8) << "K" << setw(12) << "       time (мс)\n";
+        cout << setw(8) << "K" << setw(12) << "       time (ms)\n";
         cout << "------------------\n";
 
         long long best_time = LLONG_MAX;
@@ -127,9 +117,10 @@ int main() {
         }
 
         cout << "\nBest K = " << best_K
-            << " (≈ " << fixed << setprecision(2)
-            << (double)best_K / threads << "× CPU threads)\n\n";
+            << " (~ " << fixed << setprecision(2)
+            << (double)best_K / threads << "x CPU threads)\n\n";
     }
     return 0;
 }
+
 
